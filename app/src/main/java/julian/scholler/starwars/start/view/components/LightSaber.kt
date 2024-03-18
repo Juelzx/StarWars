@@ -1,5 +1,6 @@
 package julian.scholler.starwars.start.view.components
 
+import android.view.MotionEvent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -162,6 +163,7 @@ fun Handle(onClick: () -> Unit) {
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

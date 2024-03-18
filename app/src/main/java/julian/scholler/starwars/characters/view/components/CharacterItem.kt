@@ -29,6 +29,7 @@ fun CharacterItem(character: Character) {
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // a lot of the character images aren't available
         Image(
             painter = painter,
             contentDescription = null,
