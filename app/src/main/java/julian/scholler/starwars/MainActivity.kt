@@ -24,6 +24,7 @@ import julian.scholler.starwars.start.view.components.LightSaber
 import julian.scholler.starwars.ui.theme.StarWarsTheme
 import kotlinx.coroutines.delay
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -55,8 +56,8 @@ class MainActivity : ComponentActivity() {
                             LaunchedEffect(key1 = lightSaberVisible) {
                                 if (lightSaberVisible) {
                                     delay(2.seconds)
-                                    startViewModel.updateLightSaberVisibility()
                                     navController.navigate(Screens.Characters.route)
+                                    startViewModel.updateLightSaberVisibility()
                                 }
                             }
                         }
