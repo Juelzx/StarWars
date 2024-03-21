@@ -1,7 +1,10 @@
 package julian.scholler.starwars.start.view.components
 
-import android.view.MotionEvent
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -81,21 +84,26 @@ fun Saber(
             val width = size.width
             val height = size.height
 
+            val minimumX = 0.45f
+            val maximumX = 0.55f
+            val minimumY = 0.3f
+            val maximumY = 0.8f
+
             val laserSwordPath = Path().apply {
                 moveTo(
-                    x = width * 0.45f, y = height * 0.8f
+                    x = width * minimumX, y = height * maximumY
                 )
                 lineTo(
-                    x = width * 0.45f, y = height * 0.3f
+                    x = width * minimumX, y = height * minimumY
                 )
                 lineTo(
-                    x = width * 0.55f, y = height * 0.3f
+                    x = width * maximumX, y = height * minimumY
                 )
                 lineTo(
-                    x = width * 0.55f, y = height * 0.8f
+                    x = width * maximumX, y = height * maximumY
                 )
                 lineTo(
-                    x = width * 0.45f, y = height * 0.8f
+                    x = width * minimumX, y = height * maximumY
                 )
                 close()
             }
@@ -108,22 +116,16 @@ fun Saber(
 
 @Composable
 fun Handle(onClick: () -> Unit) {
-    val glowAlpha = remember {
-        Animatable(0f)
-    }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            glowAlpha.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(durationMillis = 1000)
-            )
-            glowAlpha.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(durationMillis = 1000)
-            )
-        }
-    }
+    val infiniteGlow = rememberInfiniteTransition(label = "")
+    val scale by infiniteGlow.animateFloat(
+        initialValue = 1f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000),
+            repeatMode = RepeatMode.Restart
+        ), label = ""
+    )
 
     Canvas(
         modifier = Modifier
@@ -159,7 +161,7 @@ fun Handle(onClick: () -> Unit) {
             color = Color.Red,
             center = Offset(circleCenterX, circleCenterY),
             radius = 20f * 1.5f,
-            alpha = glowAlpha.value
+            alpha = scale
         )
     }
 }
