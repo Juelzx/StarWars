@@ -7,9 +7,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,9 +22,7 @@ import julian.scholler.starwars.navigation.Screens
 import julian.scholler.starwars.start.view.StartViewModel
 import julian.scholler.starwars.start.view.components.LightSaber
 import julian.scholler.starwars.ui.theme.StarWarsTheme
-import kotlinx.coroutines.delay
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -36,7 +34,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             StarWarsTheme {
-                val startViewModel: StartViewModel by viewModels()
                 val navController = rememberNavController()
 
                 Surface(
@@ -45,25 +42,16 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController = navController, startDestination = Screens.Start.route) {
                         composable(Screens.Start.route) {
-                            val lightSaberVisible by startViewModel.lightSaberVisibility.collectAsStateWithLifecycle()
-
                             LightSaber(
                                 modifier = Modifier.fillMaxSize(),
-                                viewModel = startViewModel
+                                viewModel = hiltViewModel<StartViewModel>(),
+                                navController = navController
                             )
-
-                            LaunchedEffect(key1 = lightSaberVisible) {
-                                if (lightSaberVisible) {
-                                    delay(2.seconds)
-                                    navController.navigate(Screens.Characters.route)
-                                    startViewModel.updateLightSaberVisibility()
-                                }
-                            }
                         }
                         composable(Screens.Characters.route) {
                             CharactersScreen(
                                 modifier = Modifier.fillMaxSize(),
-                                viewModel = CharactersViewModel(charactersRepository)
+                                viewModel = hiltViewModel<CharactersViewModel>()
                             )
                         }
                     }

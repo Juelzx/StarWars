@@ -1,6 +1,5 @@
 package julian.scholler.starwars.start.view.components
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -33,14 +32,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import julian.scholler.starwars.navigation.Screens
 import julian.scholler.starwars.start.view.StartViewModel
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun LightSaber(
     modifier: Modifier,
-    viewModel: StartViewModel = hiltViewModel()
+    viewModel: StartViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val lightSaberVisible by viewModel.lightSaberVisibility.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = lightSaberVisible) {
+        if (lightSaberVisible) {
+            delay(2.seconds)
+            navController.navigate(Screens.Characters.route)
+            viewModel.updateLightSaberVisibility()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -65,6 +77,7 @@ fun LightSaber(
         val colors = listOf(Color.Blue, Color.Red, Color.Green)
         Saber(saberColor = colors.random(), lightSaberVisible)
         Handle { viewModel.updateLightSaberVisibility() }
+
     }
 }
 
@@ -164,11 +177,4 @@ fun Handle(onClick: () -> Unit) {
             alpha = scale
         )
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LightSaberPreview() {
-    LightSaber(modifier = Modifier.fillMaxSize(), viewModel = StartViewModel())
 }
