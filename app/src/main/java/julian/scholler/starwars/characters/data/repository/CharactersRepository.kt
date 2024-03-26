@@ -11,8 +11,13 @@ import javax.inject.Inject
 class CharactersRepository @Inject constructor(private val service: CharactersService) {
     suspend fun getCharacters(): Flow<List<Character>> {
         return flow {
-            val characters = service.getCharacters()
-            emit(characters)
+            try {
+                val characters = service.getCharacters()
+                emit(characters)
+            } catch (e: Exception) {
+                emit(emptyList())
+                // show user that something went wrong
+            }
         }.flowOn(Dispatchers.IO)
     }
 }

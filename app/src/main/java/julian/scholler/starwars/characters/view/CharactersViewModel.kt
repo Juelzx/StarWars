@@ -24,6 +24,9 @@ class CharactersViewModel @Inject constructor(private val charactersRepository: 
     private fun fetchCharacters() {
         viewModelScope.launch {
             charactersRepository.getCharacters().collect { fetchedCharacters ->
+                fetchedCharacters.forEach {
+                    println(it)
+                }
                 _characters.value = fetchedCharacters
             }
         }
