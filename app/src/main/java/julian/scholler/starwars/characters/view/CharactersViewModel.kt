@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import julian.scholler.starwars.characters.data.model.Character
 import julian.scholler.starwars.characters.data.repository.CharactersRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -31,5 +32,10 @@ class CharactersViewModel @Inject constructor(private val charactersRepository: 
                 _characters.value = fetchedCharacters
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 }
