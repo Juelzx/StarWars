@@ -23,8 +23,9 @@ class CharactersViewModel @Inject constructor(private val charactersRepository: 
 
     private fun fetchCharacters() {
         viewModelScope.launch {
-            val fetchedCharacters = charactersRepository.getCharacters()
-            _characters.value = fetchedCharacters
+            charactersRepository.getCharacters().collect { fetchedCharacters ->
+                _characters.value = fetchedCharacters
+            }
         }
     }
 }

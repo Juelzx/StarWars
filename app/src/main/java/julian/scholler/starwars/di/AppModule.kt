@@ -1,13 +1,15 @@
 package julian.scholler.starwars.di
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
-import julian.scholler.starwars.characters.data.api.StarWarsService
+import julian.scholler.starwars.characters.data.api.CharactersService
 import julian.scholler.starwars.characters.data.repository.CharactersRepository
-import julian.scholler.starwars.start.view.StartViewModel
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -16,24 +18,39 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    private val httpLoggingInterceptor by lazy {
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
+    private val okHttpClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .build()
+    }
+
+    @Provides
+    fun provideGson(): Gson = GsonBuilder().create()
+
     @Singleton
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://akabab.github.io/starwars-api/api/")
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://akabab.github.io/starwars-api/api/")
             .build()
     }
 
     @Singleton
     @Provides
-    fun provideStarWarsService(retrofit: Retrofit): StarWarsService {
-        return retrofit.create(StarWarsService::class.java)
+    fun provideStarWarsService(retrofit: Retrofit): CharactersService {
+        return retrofit.create(CharactersService::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideStarWarsRepository(starWarsService: StarWarsService): CharactersRepository {
-        return CharactersRepository(starWarsService)
+    fun provideStarWarsRepository(charactersService: CharactersService): CharactersRepository {
+        return CharactersRepository(charactersService)
     }
 }
